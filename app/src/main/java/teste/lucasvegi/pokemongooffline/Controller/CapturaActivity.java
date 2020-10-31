@@ -22,6 +22,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -167,6 +168,32 @@ public class CapturaActivity extends Activity implements SensorEventListener {
                 nomePkmnCaptura.measure(0,0);
                 //Posiciona o nome do pokemon na lateral superior direita com margem de 8dp à direita
                 nomePkmnCaptura.setX(dimenX - nomePkmnCaptura.getMeasuredWidth() - ViewUnitsUtil.convertDpToPixel(8));
+            }
+        });
+
+        SeekBar zoomLevel = (SeekBar) findViewById(R.id.zoomLevel);
+        zoomLevel.setProgress(50);
+        zoomLevel.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (imagemPokemonPreparada && imagemPokeballPreparada) {
+                    float scale = progress * 2 / 100f;
+
+                    img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    img.setScaleX((float) scale);
+                    img.setScaleY((float) scale);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
