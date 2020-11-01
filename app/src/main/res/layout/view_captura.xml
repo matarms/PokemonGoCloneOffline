@@ -63,4 +63,12 @@
         android:id="@+id/pokeball"
         android:background="@android:color/transparent"/>
 
+    <SeekBar
+        android:id="@+id/zoomLevel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_y="@dimen/activity_vertical_margin"
+        android:progress="50"
+        />
+
 </AbsoluteLayout>

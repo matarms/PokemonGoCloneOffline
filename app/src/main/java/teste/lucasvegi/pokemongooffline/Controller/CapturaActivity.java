@@ -22,6 +22,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import teste.lucasvegi.pokemongooffline.View.CameraPreview;
 public class CapturaActivity extends Activity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor sensor;
+    private Sensor accelerometer;
     public ImageView img;
     public ImageView pokebola;
     public int dimenX;  //dimensao horizontal da tela em pixel
@@ -121,6 +123,7 @@ public class CapturaActivity extends Activity implements SensorEventListener {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Obtem sensores a serem utilizados
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
         //Obtem a resolução da tela
         Display display = getWindowManager().getDefaultDisplay();
@@ -170,6 +173,32 @@ public class CapturaActivity extends Activity implements SensorEventListener {
             }
         });
 
+        SeekBar zoomLevel = (SeekBar) findViewById(R.id.zoomLevel);
+        zoomLevel.setProgress(50);
+        zoomLevel.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (imagemPokemonPreparada && imagemPokeballPreparada) {
+                    float scale = progress * 2 / 100f;
+
+                    img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    img.setScaleX((float) scale);
+                    img.setScaleY((float) scale);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         img = (ImageView) findViewById(R.id.pokemon);
         img.setImageResource(pkmn.getFoto());
 
@@ -181,6 +210,10 @@ public class CapturaActivity extends Activity implements SensorEventListener {
         if(sensor != null){
             //Começa a escutar os sensores utilizados
             sensorManager.registerListener(this, sensor,SensorManager.SENSOR_DELAY_GAME);
+        }
+
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
         }
     }
 
@@ -229,6 +262,72 @@ public class CapturaActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_GYROSCOPE:
+                onGyroscopeChanged(event);
+                break;
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                onAccelerationChanged(event);
+                break;
+            default:
+                throw new IllegalStateException("Unreachable");
+        }
+
+    }
+
+    private void onAccelerationChanged(SensorEvent event) {
+//        if (imagemPokemonPreparada && imagemPokeballPreparada) {
+//            double scale;
+//
+//            if (lastTimestamp == null) {
+//                lastTimestamp = (double) event.timestamp;
+//            }
+//
+//            double elapsedSeconds = (event.timestamp - lastTimestamp) * 1e-9;
+//
+//            ax += event.values[0];
+//            ay += event.values[1];
+//            az += event.values[2];
+//
+//            if(elapsedSeconds < 1d) {
+//                return;
+//            }
+//
+//            ax /= elapsedSeconds;
+//            ay /= elapsedSeconds;
+//            az /= elapsedSeconds;
+//
+//            lastTimestamp = (double) event.timestamp;
+//
+//
+//
+//            Log.d("Accel", String.format("%f %f %f", event.values[0], event.values[1], event.values[2]));
+//
+//
+//            dx += 0.5 * ax * Math.pow(elapsedSeconds, 2);
+//            dy += 0.5 * ay * Math.pow(elapsedSeconds, 2);
+//            dz += 0.5 * az * Math.pow(elapsedSeconds, 2);
+//
+//            ax = 0;
+//            ay = 0;
+//            az = 0;
+//
+//            Log.d("Accel", String.format("%f %f %f", dx, dy, dz));
+//
+//
+//            scale = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
+//
+//            Log.d("Accel", "(x, y, z): " + dx + " " + dy +  " " + dz);
+//
+//
+//            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//            img.setScaleX((float)scale);
+//            img.setScaleY((float)scale);
+//
+//        }
+    }
+
+    public void onGyroscopeChanged(SensorEvent event) {
         if(imagemPokemonPreparada && imagemPokeballPreparada) {
             float xNovo = img.getX();
             float yNovo = img.getY();
